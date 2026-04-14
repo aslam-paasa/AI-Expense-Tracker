@@ -1,17 +1,23 @@
 import { ChatOpenAI } from '@langchain/openai';
 import { MessagesAnnotation } from '@langchain/langgraph';
+import { initDB } from './db.ts';
 
-/* 1. Prepare the LLM Model */
+
+/* 2. Init Database (dbPath) */
+const database = initDB("./expenses.db");
+
+
+/* 1. Initialize the LLM Model */
 const llm = new ChatOpenAI({
     model: 'gpt-5.1-mini',
     temperature: 0,
 });
 
 
-/* 2. Prepare Tool Node */
+/* 3. Prepare Tool Node */
 
 
-/* 2. Prepare Call Model Node */
+/* 4. Prepare Call Model Node */
 async function callModel(state: typeof MessagesAnnotation) {
     return state;
 }
