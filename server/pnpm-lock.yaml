@@ -17,6 +17,12 @@ importers:
       '@langchain/openai':
         specifier: ^1.4.4
         version: 1.4.4(@langchain/core@1.1.39(openai@6.34.0(zod@4.3.6)))
+      langchain:
+        specifier: ^1.3.2
+        version: 1.3.2(@langchain/core@1.1.39(openai@6.34.0(zod@4.3.6)))(openai@6.34.0(zod@4.3.6))
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
 
 packages:
 
@@ -103,6 +109,12 @@ packages:
 
   js-tiktoken@1.0.21:
     resolution: {integrity: sha512-biOj/6M5qdgx5TKjDnFT1ymSpM5tbd3ylwDtrQvFQSu0Z7bBYko2dF+W/aUkXUPuk6IVpRxk/3Q2sHOzGlS36g==}
+
+  langchain@1.3.2:
+    resolution: {integrity: sha512-d6u7VcHgQgirKWtXJCLshG9+LoaKME22jXA1SgfZ8VpIQNBLHGhHyC/ZauDwtnBePKwhG8iiAOPzJx1EyftSYQ==}
+    engines: {node: '>=20'}
+    peerDependencies:
+      '@langchain/core': ^1.1.39
 
   langsmith@0.5.18:
     resolution: {integrity: sha512-3zuZUWffTHQ+73EAwnodADtf534VNEZUpXr9jC12qyG8/IQuJET7PRsCpTb9wX2lmBspakwLUpqpj3tNm/0bVA==}
@@ -261,6 +273,26 @@ snapshots:
   js-tiktoken@1.0.21:
     dependencies:
       base64-js: 1.5.1
+
+  langchain@1.3.2(@langchain/core@1.1.39(openai@6.34.0(zod@4.3.6)))(openai@6.34.0(zod@4.3.6)):
+    dependencies:
+      '@langchain/core': 1.1.39(openai@6.34.0(zod@4.3.6))
+      '@langchain/langgraph': 1.2.8(@langchain/core@1.1.39(openai@6.34.0(zod@4.3.6)))(zod@4.3.6)
+      '@langchain/langgraph-checkpoint': 1.0.1(@langchain/core@1.1.39(openai@6.34.0(zod@4.3.6)))
+      langsmith: 0.5.18(openai@6.34.0(zod@4.3.6))
+      uuid: 11.1.0
+      zod: 4.3.6
+    transitivePeerDependencies:
+      - '@opentelemetry/api'
+      - '@opentelemetry/exporter-trace-otlp-proto'
+      - '@opentelemetry/sdk-trace-base'
+      - openai
+      - react
+      - react-dom
+      - svelte
+      - vue
+      - ws
+      - zod-to-json-schema
 
   langsmith@0.5.18(openai@6.34.0(zod@4.3.6)):
     dependencies:
