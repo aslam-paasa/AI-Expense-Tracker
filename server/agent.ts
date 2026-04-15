@@ -29,6 +29,7 @@ async function callModel(state: typeof MessagesAnnotation.State) {
             role: 'system',
             content: `You are a helpful tracking assistant. Current datetime: ${new Date().toISOString()}.
                       Call add_expense tool to add the expense to database.
+                      Call get_expenses tool to get the list of expenses for given date range.
                     `
         },
         ...state.messages
@@ -50,6 +51,10 @@ function shouldContinue(state: typeof MessagesAnnotation.State) {
     return '__end__';
 }
 
+function shouldCallModel(state: typeof MessagesAnnotation.State) {
+    /* todo: change this when chart tool will be implemented */
+    return 'callModel';
+}
 
 /**
  * 5. Compile Graph + Add Memory
@@ -62,11 +67,18 @@ const graph = new StateGraph(MessagesAnnotation)
         '__end__':'__end__', 
         'tools':'tools'
     })
+    .addConditionalEdges('tools', shouldCallModel, {
+        callModel: 'callModel',
+    })
 
 const agent = graph.compile({ checkpointer: new MemorySaver() });
 
 
-/* 6. Invoke AI Agent: node --env-file=.env agent.ts */
+/**
+ * 6. Invoke AI Agent: node --env-file=.env agent.ts 
+ *    - I just bought a laptop for 80,000 inr
+ *    - How much I have spent this month?
+ * */
 async function main() {
     const response = await agent.invoke({
         messages: [
