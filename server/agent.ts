@@ -30,6 +30,7 @@ async function callModel(state: typeof MessagesAnnotation.State) {
             content: `You are a helpful tracking assistant. Current datetime: ${new Date().toISOString()}.
                       Call add_expense tool to add the expense to database.
                       Call get_expenses tool to get the list of expenses for given date range.
+                      Call generate_expense_chart tool only when user needs to visualize the expenses.
                     `
         },
         ...state.messages
@@ -77,7 +78,9 @@ const agent = graph.compile({ checkpointer: new MemorySaver() });
 /**
  * 6. Invoke AI Agent: node --env-file=.env agent.ts 
  *    - I just bought a laptop for 80,000 inr
+ *    - I just bought flowers for 2000 inr
  *    - How much I have spent this month?
+ *    - Can you visualize how much I have spent this year group by months?
  * */
 async function main() {
     const response = await agent.invoke({

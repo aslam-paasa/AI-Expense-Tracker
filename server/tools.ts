@@ -48,8 +48,43 @@ export function initTools(database: DatabaseSync) {
     )
 
 
+    /* Tool Node-3: Generate Chart */
+    const generateChart = tool(
+        ({from, to, groupBy}) => {
+
+            console.log('args', { from, to, groupBy });
+            
+            /* YYYY-MM-DD -> month -> 2025-11-26 -> 2025-11 */
+            const query = `
+                SELECT strftime('%Y-%m', date) as period, SUM(amount) as total
+                FROM expenses
+                WHERE date BETWEEN ? AND ?
+                GROUP BY period
+                ORDER BY period
+            `;
+
+            const stmt = database.prepare(query);
+            const rows = stmt.all(from, to);
+
+            console.log('rows', rows);
+
+            return JSON.stringify(rows);
+
+        },
+        {
+            name: 'generate_expense_chart',
+            description: 'Generate expense charts by querying the database and grouping expenses by month, week or date',
+            schema: z.object({
+                from: z.string().describe('Start date in YYYY-MM-DD format'),
+                to: z.string().describe('End date in YYYY-MM-DD format'),
+                groupBy: z.enum(['month', 'week', 'date']).describe('How to group the data: by month, week or date.')
+            })
+        }
+    )
+
+
     /* return tools */ 
-    return [addExpense, getExpenses]
+    return [addExpense, getExpenses, generateChart]
 }
 
 
