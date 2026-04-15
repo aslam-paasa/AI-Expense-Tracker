@@ -1,4 +1,5 @@
 import { ChatOpenAI } from '@langchain/openai';
+import type { LangGraphRunnableConfig } from '@langchain/langgraph'
 import { MemorySaver, MessagesAnnotation, StateGraph } from '@langchain/langgraph';
 import { initDB } from './db.ts';
 import { initTools } from './tools.ts';
@@ -22,8 +23,14 @@ const llm = new ChatOpenAI({
 const toolNode = new ToolNode(tools);
 
 /* 4. Prepare Call Model Node + Store Messages + Bind Tools*/
-async function callModel(state: typeof MessagesAnnotation.State) {
+async function callModel(
+    state: typeof MessagesAnnotation.State,
+    config: LangGraphRunnableConfig
+) {
     const llmWithTools = llm.bindTools(tools);
+
+    config.writer?.(`Calling LLM >>>>>`);
+
     const response = await llmWithTools.invoke([
         {
             role: 'system',
@@ -101,7 +108,7 @@ async function main() {
             }
         ]
     }, { 
-        streamMode: "updates",
+        streamMode: ["updates", "custom"],
         configurable: { thread_id: '1'} 
     })
 
