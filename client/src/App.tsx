@@ -3,7 +3,7 @@ import "./App.css";
 function App() {
   return (
     <>
-      <h1>Welcome to Expense Tracker</h1>
+      <h1 className="text-3xl font-bold underline text-purple-900">Welcome to Expense Tracker</h1>
     </>
   );
 }
