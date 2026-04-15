@@ -86,23 +86,30 @@ const agent = graph.compile({ checkpointer: new MemorySaver() });
 
 
 /**
- * 6. Invoke AI Agent: node --env-file=.env agent.ts 
+ * 6. Stream AI Agent: node --env-file=.env agent.ts 
  *    - I just bought a laptop for 80,000 inr
  *    - I just bought flowers for 2000 inr
  *    - How much I have spent this month?
  *    - Can you visualize how much I have spent this year group by months?
  * */
 async function main() {
-    const response = await agent.invoke({
+    const response = await agent.stream({
         messages: [
             {
                 role: 'user',
                 content: 'I just bought a laptop for 80,000 inr'
             }
         ]
-    }, { configurable: { thread_id: '1'} })
+    }, { 
+        streamMode: "updates",
+        configurable: { thread_id: '1'} 
+    })
 
-    console.log(JSON.stringify(response, null, 2));
+    for await (const chunk of response) {
+        console.log('Chunk', chunk);
+    }
+
+    // console.log(JSON.stringify(response, null, 2));
 }
 
-main()
+main();
