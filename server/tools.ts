@@ -83,8 +83,19 @@ export function initTools(database: DatabaseSync) {
 
             console.log('rows', rows);
 
-            return JSON.stringify(rows);
+            /* todo: Format to chart input structure */
+            const result = rows.map(row => {
+                return {
+                    [groupBy]: row.period,
+                    amount: row.total,
+                }
+            })
 
+            return JSON.stringify({ 
+                type: 'chart', 
+                data: result, 
+                labelKey: groupBy 
+            });
         },
         {
             name: 'generate_expense_chart',
