@@ -1,10 +1,9 @@
+import { ChatContainer } from './components/ChatContainer';
 import "./App.css";
 
 function App() {
   return (
-    <>
-      <h1 className="text-3xl font-bold underline text-purple-900">Welcome to Expense Tracker</h1>
-    </>
+    <ChatContainer />
   );
 }
 
