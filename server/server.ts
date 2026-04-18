@@ -12,7 +12,9 @@ app.get('/', (req, res) => {
 })
 
 /* SSE: Server Sent Event Protocol */
-app.get('/chat', (req, res) => {
+app.post('/chat', (req, res) => {
+    const body = req.body;
+    console.log('query', body);
 
     /* 1. add special header */
     res.writeHead(200, {
@@ -22,7 +24,7 @@ app.get('/chat', (req, res) => {
     /* 2. Send data in special format */
     setInterval(() => {
         res.write("event: cgPing\n")        // a. Event Key
-        res.write('data: Happy Coding\n\n') // b. Sending data 
+        res.write(`data:${body?.query}\n\n`) // b. Sending data 
     }, 1000);
 })
 

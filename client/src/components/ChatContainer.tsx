@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { ChatInput } from "./ChatInput";
 import { ChatMessage } from "./ChatMessage";
 
@@ -6,20 +7,22 @@ export function ChatContainer() {
   const [messages, setMessages] = useState<string[]>([]);
 
   useEffect(() => {
-    const evtSource = new EventSource("http://localhost:4100/chat");
+    /* Fetch Event Source Library */
+    async function submitQuery() {
+      await fetchEventSource("http://localhost:4100/chat", {
+        onmessage(ev) {
+          console.log(ev.event);
+          console.log(ev.data);
+        },
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ query: 'HI' }), /* Hardcoded */
+      });
+    }
 
-    evtSource.addEventListener("open", () => {
-      console.log("Connection Opened!");
-    });
-
-    evtSource.addEventListener("cgPing", (event) => {
-      console.log("Received eventName: ", event.type);
-      setMessages((messages) => [...messages, event.data]);
-    });
-
-    // evtSource.addEventListener('message', (data) => {
-    //   console.log('Received Message: ', data);
-    // })
+    submitQuery();
   }, []);
 
   return (
@@ -57,13 +60,6 @@ export function ChatContainer() {
           </div>
         </div>
       </div>
-
-      {/* SSE Message on UI */}
-      {messages.map((message) => (
-        <div className="text-white" key={message}>
-          {message}
-        </div>
-      ))}
 
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto w-full">
