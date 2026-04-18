@@ -21,12 +21,9 @@ app.get('/chat', (req, res) => {
 
     /* 2. Send data in special format */
     setInterval(() => {
-        res.write("event: cgPing/n")    // q. Event Key
-        res.write('data: Happy Coding') // b. Sending data 
-        res.write("/n/n")               // c. 2 New Line
+        res.write("event: cgPing\n")        // a. Event Key
+        res.write('data: Happy Coding\n\n') // b. Sending data 
     }, 1000);
-
-    res.json({});
 })
 
 

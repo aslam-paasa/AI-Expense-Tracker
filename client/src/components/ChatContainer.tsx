@@ -1,8 +1,27 @@
+import { useEffect, useState } from "react";
 import { ChatInput } from "./ChatInput";
 import { ChatMessage } from "./ChatMessage";
 
-const messages = ["firstmessage"];
 export function ChatContainer() {
+  const [messages, setMessages] = useState<string[]>([]);
+
+  useEffect(() => {
+    const evtSource = new EventSource("http://localhost:4100/chat");
+
+    evtSource.addEventListener("open", () => {
+      console.log("Connection Opened!");
+    });
+
+    evtSource.addEventListener("cgPing", (event) => {
+      console.log("Received eventName: ", event.type);
+      setMessages((messages) => [...messages, event.data]);
+    });
+
+    // evtSource.addEventListener('message', (data) => {
+    //   console.log('Received Message: ', data);
+    // })
+  }, []);
+
   return (
     <div className="flex flex-col h-screen w-full bg-zinc-950">
       {/* Header */}
@@ -38,6 +57,13 @@ export function ChatContainer() {
           </div>
         </div>
       </div>
+
+      {/* SSE Message on UI */}
+      {messages.map((message) => (
+        <div className="text-white" key={message}>
+          {message}
+        </div>
+      ))}
 
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto w-full">
@@ -93,9 +119,7 @@ export function ChatContainer() {
                     key={idx}
                     className="p-4 rounded-xl bg-zinc-800/40 border border-zinc-700/50 hover:border-purple-500/50 transition-all cursor-pointer group"
                   >
-                    <div className="text-2xl mb-2">
-                    {item.icon}
-                    </div>
+                    <div className="text-2xl mb-2">{item.icon}</div>
                     <div className="text-sm font-medium text-zinc-200 group-hover:text-purple-400 transition-colors">
                       {item.title}
                     </div>
