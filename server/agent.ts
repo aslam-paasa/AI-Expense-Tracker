@@ -89,7 +89,7 @@ const graph = new StateGraph(MessagesAnnotation)
         '__end__': '__end__',
     })
 
-const agent = graph.compile({ checkpointer: new MemorySaver() });
+export const agent = graph.compile({ checkpointer: new MemorySaver() });
 
 
 /**
@@ -99,24 +99,24 @@ const agent = graph.compile({ checkpointer: new MemorySaver() });
  *    - How much I have spent this month?
  *    - Can you visualize how much I have spent this year group by months?
  * */
-async function main() {
-    const response = await agent.stream({
-        messages: [
-            {
-                role: 'user',
-                content: 'I just bought a laptop for 80,000 inr'
-            }
-        ]
-    }, { 
-        streamMode: ["updates", "custom"],
-        configurable: { thread_id: '1'} 
-    })
+// async function main() {
+//     const response = await agent.stream({
+//         messages: [
+//             {
+//                 role: 'user',
+//                 content: 'I just bought a laptop for 80,000 inr'
+//             }
+//         ]
+//     }, { 
+//         streamMode: ["updates", "custom"],
+//         configurable: { thread_id: '1'} 
+//     })
 
-    for await (const chunk of response) {
-        console.log('Chunk', chunk);
-    }
+//     for await (const chunk of response) {
+//         console.log('Chunk', chunk);
+//     }
 
-    // console.log(JSON.stringify(response, null, 2));
-}
+//     // console.log(JSON.stringify(response, null, 2));
+// }
 
-main();
+// main();

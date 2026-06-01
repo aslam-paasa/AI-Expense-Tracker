@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import { agent } from './agent.ts';
 
 const app = express();
 
@@ -12,20 +13,40 @@ app.get('/', (req, res) => {
 })
 
 /* SSE: Server Sent Event Protocol */
-app.post('/chat', (req, res) => {
-    const body = req.body;
-    console.log('query', body);
+app.post('/chat', async (req, res) => {
+    const { query } = req.body;
 
     /* 1. add special header */
     res.writeHead(200, {
         'Content-Type': 'text/event-stream'
     });
 
-    /* 2. Send data in special format */
-    setInterval(() => {
-        res.write("event: cgPing\n")        // a. Event Key
-        res.write(`data:${body?.query}\n\n`) // b. Sending data 
-    }, 1000);
+    /* 2. Send data to LLM */
+    const response = await agent.stream({
+        messages: [
+            {
+                role: 'user',
+                content: query
+            }
+        ]
+    }, { 
+        streamMode: ['messages'],
+        // todo: generate dynamically
+        configurable: { thread_id: '1'} 
+    })
+
+    for await (const [eventType, chunk] of response) {
+        console.log('eventType', eventType);
+        console.log('Chunk', JSON.stringify(chunk[0].content, null, 2));
+
+        let message = { type: 'ai', payload: chunk[0].content }
+
+        res.write(`event: ${eventType}\n`)
+        res.write(`data: ${JSON.stringify(message)}\n`)
+        res.end()
+
+    }
+
 })
 
 
