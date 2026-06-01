@@ -1,13 +1,19 @@
 import { useState, useRef, useEffect } from "react";
 
-export function ChatInput() {
+type Props = {
+  onSubmit: (userInput: string) => void
+}
+
+export function ChatInput({onSubmit}: Props) {
   const [input, setInput] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (input.trim()) {
-      console.log("You typed:", input.trim());
+
+    const userInput = input.trim();
+    if (userInput) {
+      onSubmit(userInput)
       setInput("");
       if (textareaRef.current) {
         textareaRef.current.style.height = "auto";
@@ -18,8 +24,14 @@ export function ChatInput() {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      console.log("You typed:", input.trim());
-      // handle submit here...
+
+      const userInput = input.trim();
+      onSubmit(userInput)
+      setInput("");
+      
+      if (textareaRef.current) {
+        textareaRef.current.style.height = "auto";
+      }
     }
   };
 

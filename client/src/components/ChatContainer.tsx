@@ -6,24 +6,25 @@ import { ChatMessage } from "./ChatMessage";
 export function ChatContainer() {
   const [messages, setMessages] = useState<string[]>([]);
 
-  useEffect(() => {
-    /* Fetch Event Source Library */
-    async function submitQuery() {
-      await fetchEventSource("http://localhost:4100/chat", {
-        onmessage(ev) {
-          console.log(ev.event);
-          console.log(ev.data);
-        },
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ query: 'HI' }), /* Hardcoded */
-      });
-    }
+  /* Fetch Event Source */
+  async function submitQuery(userInput: string) {
+    await fetchEventSource("http://localhost:4100/chat", {
+      onmessage(ev) {
+        console.log(ev.event);
+        console.log(ev.data);
+      },
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ query: userInput }) /* Hardcoded */,
+    });
+  }
 
-    submitQuery();
-  }, []);
+  const onSubmit = (userInput: string) => {
+    console.log("user input", userInput);
+    submitQuery(userInput);
+  };
 
   return (
     <div className="flex flex-col h-screen w-full bg-zinc-950">
@@ -137,7 +138,7 @@ export function ChatContainer() {
 
       {/* Input Area */}
       <div className="shrink-0 w-full">
-        <ChatInput />
+        <ChatInput onSubmit={onSubmit} />
       </div>
     </div>
   );
