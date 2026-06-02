@@ -3,6 +3,22 @@ import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { ChatInput } from "./ChatInput";
 import { ChatMessage } from "./ChatMessage";
 
+type StreamMessage =
+  | {
+      type: "ai";
+      payload: { text: string };
+    }
+  | {
+      type: "toolCall:start";
+      name: string;
+      args: Record<string, any>;
+    }
+  | {
+      type: "tool";
+      name: string;
+      result: Record<string, any>;
+    };
+
 export function ChatContainer() {
   const [messages, setMessages] = useState<string[]>([]);
 
@@ -11,13 +27,14 @@ export function ChatContainer() {
     await fetchEventSource("http://localhost:4100/chat", {
       onmessage(ev) {
         console.log(ev.event);
-        console.log(ev.data);
+        const parsedData = JSON.parse(ev.data) as StreamMessage;
+        console.log(parsedData);
       },
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ query: userInput }) /* Hardcoded */,
+      body: JSON.stringify({ query: userInput }),
     });
   }
 
