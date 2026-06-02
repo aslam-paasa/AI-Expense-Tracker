@@ -2,28 +2,20 @@ import { useEffect, useState } from "react";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { ChatInput } from "./ChatInput";
 import { ChatMessage } from "./ChatMessage";
+import type { StreamMessage } from "../type.ts";
 
-type StreamMessage =
-  | {
-      type: "ai";
-      payload: { text: string };
-    }
-  | {
-      type: "toolCall:start";
-      name: string;
-      args: Record<string, any>;
-    }
-  | {
-      type: "tool";
-      name: string;
-      result: Record<string, any>;
-    };
 
 export function ChatContainer() {
-  const [messages, setMessages] = useState<string[]>([]);
+  const [messages, setMessages] = useState<StreamMessage[]>([]);
 
   /* Fetch Event Source */
   async function submitQuery(userInput: string) {
+    setMessages((prevMessages) => {
+      return [
+        ...prevMessages, 
+        { id: Date.now().toString(), type: "user", payload: { text: userInput } }
+      ];
+    });
     await fetchEventSource("http://localhost:4100/chat", {
       onmessage(ev) {
         console.log(ev.event);
@@ -147,7 +139,13 @@ export function ChatContainer() {
           ) : (
             <div className="divide-y divide-zinc-800/50">
               {/* Messages will be displayed here... */}
-              <ChatMessage />
+              {messages.map((message) => {
+                return (
+                  <div key={message.id}>
+                    <ChatMessage message={message} />
+                  </div>
+                )
+              })}
             </div>
           )}
         </div>
