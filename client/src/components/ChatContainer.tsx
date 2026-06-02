@@ -4,22 +4,56 @@ import { ChatInput } from "./ChatInput";
 import { ChatMessage } from "./ChatMessage";
 import type { StreamMessage } from "../type.ts";
 
-
 export function ChatContainer() {
   const [messages, setMessages] = useState<StreamMessage[]>([]);
+
+  useEffect(() => {
+    console.log('messages: ', messages);
+  }, [messages]);
 
   /* Fetch Event Source */
   async function submitQuery(userInput: string) {
     setMessages((prevMessages) => {
       return [
-        ...prevMessages, 
-        { id: Date.now().toString(), type: "user", payload: { text: userInput } }
+        ...prevMessages,
+        {
+          id: Date.now().toString(),
+          type: "user",
+          payload: { text: userInput },
+        },
       ];
     });
+
     await fetchEventSource("http://localhost:4100/chat", {
       onmessage(ev) {
         console.log(ev.event);
         const parsedData = JSON.parse(ev.data) as StreamMessage;
+
+        if (parsedData.type === "ai") {
+          setMessages((prevMessages) => {
+            const lastMessage = prevMessages[prevMessages.length - 1];
+            if (lastMessage && lastMessage.type === "ai") {
+              /* append to last message */
+              const clonedMessages = [...prevMessages];
+              clonedMessages[clonedMessages.length - 1] = {
+                ...lastMessage,
+                payload: {
+                  text: lastMessage.payload.text + parsedData.payload.text,
+                },
+              };
+              return clonedMessages;
+            } else {
+              return [
+                ...prevMessages,
+                {
+                  id: Date.now().toString(),
+                  type: "ai",
+                  payload: parsedData.payload,
+                },
+              ];
+            }
+          });
+        }
         console.log(parsedData);
       },
       method: "POST",
@@ -144,7 +178,7 @@ export function ChatContainer() {
                   <div key={message.id}>
                     <ChatMessage message={message} />
                   </div>
-                )
+                );
               })}
             </div>
           )}
