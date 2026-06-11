@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { ChatInput } from "./ChatInput";
 import { ChatMessage } from "./ChatMessage";
@@ -6,9 +6,12 @@ import type { StreamMessage } from "../type.ts";
 
 export function ChatContainer() {
   const [messages, setMessages] = useState<StreamMessage[]>([]);
+  const messageEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    console.log("messages: ", messages);
+    messageEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
   }, [messages]);
 
   /* Fetch Event Source */
@@ -201,6 +204,8 @@ export function ChatContainer() {
                   </div>
                 );
               })}
+
+              <div ref={messageEndRef} />
             </div>
           )}
         </div>
