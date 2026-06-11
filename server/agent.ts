@@ -5,6 +5,7 @@ import { initDB } from './db.ts';
 import { initTools } from './tools.ts';
 import { ToolNode } from '@langchain/langgraph/prebuilt';
 import { AIMessage, ToolMessage } from 'langchain';
+import type { StreamMessage } from "./types.ts";
 
 
 /* 2. Init Database (dbPath) */
@@ -49,11 +50,25 @@ async function callModel(
 /**
  * Conditional Edge
 */
-function shouldContinue(state: typeof MessagesAnnotation.State) {
+function shouldContinue(
+    state: typeof MessagesAnnotation.State,
+    config: LangGraphRunnableConfig
+) {
     const messages = state.messages;
     const lastMessage = messages.at(-1) as AIMessage;
 
     if(lastMessage.tool_calls?.length) {
+
+        /* Send Custom Event */
+        const customMessage: StreamMessage = {
+            type: 'toolCall:start',
+            payload: {
+                name: lastMessage.tool_calls[0].name, /* tool name */
+                args: lastMessage.tool_calls[0].args  /* llm arguments */
+            }
+        }
+
+        config.writer!(customMessage);
         return 'tools';
     }
     return '__end__';
