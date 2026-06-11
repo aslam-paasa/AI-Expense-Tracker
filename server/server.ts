@@ -58,7 +58,7 @@ app.post("/chat", async (req, res) => {
         };
       } else if (messageType === "tool") {
         message = {
-          type: "tool",
+          type: "tool", // tool
           payload: {
             name: chunk[0].name!,
             result: JSON.parse(chunk[0].content as string),

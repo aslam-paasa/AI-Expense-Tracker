@@ -70,5 +70,41 @@ export function ChatMessage({ message }: Props) {
         </div>
       </div>
     );
+  } else if (message.type === 'tool') {
+    return (
+      <div className="flex gap-4 py-4 px-6">
+        <div className="shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-green-900/15 flex items-center justify-center">
+            <svg
+              className="w-4 h-4 text-green-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          </div>
+        </div>
+        <div className="flex-1 space-y-2">
+          <div className="text-sm text-zinc-400">
+            Tool result:{' '}
+            <span className="text-green-400 font-medium">
+              {message.payload.name}
+            </span>
+          </div>
+          <div className="text-xs text-zinc-300 bg-green-900/20 rounded-lg p-3 font-mono whitespace-pre-wrap">
+            {JSON.stringify(
+              message.payload.result,
+              null,
+              2
+            )}
+          </div>
+        </div>
+      </div>
+    );
   }
 }

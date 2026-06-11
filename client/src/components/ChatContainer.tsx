@@ -70,7 +70,7 @@ export function ChatContainer() {
               ...prevMessages,
               {
                 id: Date.now().toString(),
-                type: "tool",
+                type: "tool", // tool
                 payload: parsedData.payload,
               },
             ];
