@@ -1,5 +1,6 @@
 import { User, Wrench } from "lucide-react";
 import type { StreamMessage } from "../type.ts";
+import { ExpenseChart } from "./ExpenseChart.tsx";
 
 type Props = {
   message: StreamMessage;
@@ -103,6 +104,14 @@ export function ChatMessage({ message }: Props) {
               2
             )}
           </div>
+
+          {message.payload.name ===
+            'generate_expense_chart' && (
+            <ExpenseChart
+              chartData={message.payload.result.data}
+              labelKey={message.payload.result.labelKey}
+            />
+          )}
         </div>
       </div>
     );
