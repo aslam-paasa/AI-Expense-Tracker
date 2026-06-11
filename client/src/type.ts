@@ -7,14 +7,18 @@ export type StreamMessage =
   | {
       id: string;
       type: "toolCall:start";
-      name: string;
-      args: Record<string, any>;
+      payload: {
+        name: string;
+        args: Record<string, any>;
+      };
     }
   | {
       id: string;
       type: "tool";
-      name: string;
-      result: Record<string, any>;
+      payload: {
+        name: string;
+        result: Record<string, any>;
+      };
     }
   | {
       id: string;

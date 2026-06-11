@@ -30,8 +30,6 @@ async function callModel(
 ) {
     const llmWithTools = llm.bindTools(tools);
 
-    config.writer?.(`Calling LLM >>>>>`);
-
     const response = await llmWithTools.invoke([
         {
             role: 'system',

@@ -8,7 +8,7 @@ export function ChatContainer() {
   const [messages, setMessages] = useState<StreamMessage[]>([]);
 
   useEffect(() => {
-    console.log('messages: ', messages);
+    console.log("messages: ", messages);
   }, [messages]);
 
   /* Fetch Event Source */
@@ -53,8 +53,29 @@ export function ChatContainer() {
               ];
             }
           });
+        } else if (parsedData.type === "toolCall:start") {
+          setMessages((prevMessages) => {
+            return [
+              ...prevMessages,
+              {
+                id: Date.now().toString(),
+                type: "toolCall:start",
+                payload: parsedData.payload,
+              },
+            ];
+          });
+        } else if (parsedData.type === "tool") {
+          setMessages((prevMessages) => {
+            return [
+              ...prevMessages,
+              {
+                id: Date.now().toString(),
+                type: "tool",
+                payload: parsedData.payload,
+              },
+            ];
+          });
         }
-        console.log(parsedData);
       },
       method: "POST",
       headers: {
